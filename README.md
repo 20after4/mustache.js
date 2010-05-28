@@ -82,7 +82,7 @@ enumeration section.
     var view = {name: "Joe's shopping card",
                 items: ["bananas", "apples"]}
 
-    var template = "{{name}}: <ul> {{#items}}<li>{{.}}</li>{{/items}} </ul>"
+    var template = "{{%IMPLICIT-ITERATOR}}{{name}}: <ul> {{#items}}<li>{{.}}</li>{{/items}} </ul>"
 
     Outputs:
     Joe's shopping card: <ul><li>bananas</li><li>apples</li></ul>
