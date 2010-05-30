@@ -127,11 +127,12 @@ var Mustache = function() {
     },
     
     renderTree: function(tree, context, partials, template) {
+      var value;
       for (var i = 0, len = tree.length; i < len; ++i) {
         var item = tree[i];
         if (item.section) {
           var iterator = this.valueIterator(item.tag, context);
-          var value;
+          
           if (item.invert) {
             value = iterator();
             if (!value) {
@@ -173,8 +174,8 @@ var Mustache = function() {
           // ignore other operators
         } else if (item.tag) {
           var rawValue = this.lookupValue(item.tag, context);
-          if (rawValue) {
-            var value = rawValue.toString();
+          if (rawValue||rawValue===0||rawValue==='0') {
+            value = rawValue.toString();
             this.send((item.noEscape) ? value : this.escapeHTML(value));
           }
         } else {
@@ -191,7 +192,7 @@ var Mustache = function() {
         value = value.apply(context);
       }
       // silently ignore unkown variables
-      if (!value) {
+      if (!value && value !== 0 && value !== '0') {
         value = "";
       }
       return value;
@@ -201,12 +202,15 @@ var Mustache = function() {
       if (value instanceof Function) {
         return value;
       }
-      
-      var obj = (value != null) ? {} : null;
+      if (value===null) {
+          return null;
+      }
+      var obj = null;
       if (Object.prototype.toString.call(value) == '[object Object]') {
         obj = value;
       } else if(this.pragmas["IMPLICIT-ITERATOR"]) {
         // original credit to @langalex, support for arrays of strings
+        obj={};
         var iteratorKey = this.pragmas["IMPLICIT-ITERATOR"].iterator || ".";
         obj[iteratorKey] = value;
       }
@@ -286,3 +290,4 @@ var Mustache = function() {
     }
   });
 }();
+
